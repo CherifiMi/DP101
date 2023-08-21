@@ -1,52 +1,55 @@
-import Parser.Companion.server
 import java.lang.RuntimeException
 
 fun main() {
 
-    val portProperty = "port: 8080"
-    val environment = "environment: production"
+    val email = MailBuilder().message("hellow").title("mito").build()
 
-    val server = server(listOf(portProperty, environment))
-
-    println(server.property)
+    println(email)
 
 }
 
-interface Property{
-    val name: String
-    val value: Any
-}
-interface ServerConfig {
-    val property: List<Property>
-}
 
-data class IntProperty(
-    override val name: String,
-    override val value: Int
-): Property
-data class StringProperty(
-    override val name: String,
-    override val value: String
-): Property
+class MailBuilder {
+    private var to: List<String> = listOf("")
+    private var cc: List<String>? = null
+    private var title: String? = ""
+    private var message: String? = null
+    private var important: Boolean = false
 
-data class ServerConfigImpl(override val property: List<Property>):ServerConfig
+    class Mail internal constructor(
+        val to: List<String>,
+        val cc: List<String>?,
+        val title: String?,
+        val message: String?,
+        val important: Boolean,
+    )
 
-class Parser{
-    companion object{
-        fun property(prop: String): Property{
-            val (name, value) = prop.split(":")
-            return when(name){
-                "port" -> IntProperty(name, value.trim().toInt())
-                "environment" -> StringProperty(name, value)
-                else ->  throw RuntimeException("unknown prop: $name")
-            }
+    fun build(): Mail {
+        if (to.isEmpty()){
+            throw RuntimeException("to is empty")
         }
-        fun server(propertyString: List<String>): ServerConfig{
-            val paresedProperties = mutableListOf<Property>()
-            for (p in propertyString){
-                paresedProperties += property(p)
-            }
-            return ServerConfigImpl(paresedProperties)
-        }
+        return Mail(to, cc, title, message, important)
     }
+
+    fun title(title: String?): MailBuilder {
+        this.title = title
+        return this
+    }
+    fun important(important: Boolean): MailBuilder {
+        this.important = important
+        return this
+    }
+    fun cc(cc: List<String>?): MailBuilder {
+        this.cc = cc
+        return this
+    }
+    fun to(to: List<String>): MailBuilder {
+        this.to = to
+        return this
+    }
+    fun message(message: String): MailBuilder {
+        this.message = message
+        return this
+    }
+
 }
