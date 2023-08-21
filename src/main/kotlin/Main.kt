@@ -2,48 +2,29 @@ import java.lang.RuntimeException
 
 fun main() {
 
-    val email = Mail().message("hellow").title("mito")
+    val email = Mail2(listOf("mito@gmail")).message("hellow").title("mito")
 
-    println(email.cc)
+    println(email)
 
 }
 
+data class Mail2(
+    var to: List<String> = listOf(""),
+    private var _cc: List<String>? = null,
+    private var _title: String? = "",
+    private var _message: String? = null,
+    private var _important: Boolean = false,
+) {
+    val cc: List<String>? get() = _cc
+    val title: String? get() = _title
+    val message: String? get() = _message
+    val important: Boolean get() = _important
 
-class Mail {
-    var to: List<String> = listOf("")
-        private set
-    var cc: List<String>? = null
-        private set
-    var title: String? = ""
-        private set
-    var message: String? = null
-        private set
-    var important: Boolean = false
-        private set
-
-
-    fun title(title: String?): Mail {
-        this.title = title
-        return this
+    fun title(title: String?) = apply {
+        _title = title
     }
 
-    fun important(important: Boolean): Mail {
-        this.important = important
-        return this
-    }
-
-    fun cc(cc: List<String>?): Mail {
-        this.cc = cc
-        return this
-    }
-
-    fun to(to: List<String>): Mail {
-        this.to = to
-        return this
-    }
-
-    fun message(message: String): Mail {
-        this.message = message
-        return this
+    fun message(message: String?) = apply {
+        _message = message
     }
 }
