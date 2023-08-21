@@ -1,65 +1,52 @@
-import java.lang.Exception
+import Parser.Companion.server
 import java.lang.RuntimeException
 
 fun main() {
 
-    val notations = listOf(
-        "Pe4",
-        "Pb6",
-        "Pd4",
-        "Pg6",
-        "Pc3",
-        "Pd6",
-        "Pe5",
-        "Pd5",
-        "Bb7",
-        "Bd3",
-        "Bg7",
-        "Nf3",
-        "Be3",
-        "Nd7",
-        "Nd2",
-        "Qd6"
-    )
-    val pieces = mutableListOf<ChessPiece>()
-    for (n in notations) {
-        pieces.add(createChessPiece(n))
+    val portProperty = "port: 8080"
+    val environment = "environment: production"
+
+    val server = server(listOf(portProperty, environment))
+
+    println(server.property)
+
+}
+
+interface Property{
+    val name: String
+    val value: Any
+}
+interface ServerConfig {
+    val property: List<Property>
+}
+
+data class IntProperty(
+    override val name: String,
+    override val value: Int
+): Property
+data class StringProperty(
+    override val name: String,
+    override val value: String
+): Property
+
+data class ServerConfigImpl(override val property: List<Property>):ServerConfig
+
+class Parser{
+    companion object{
+        fun property(prop: String): Property{
+            val (name, value) = prop.split(":")
+            return when(name){
+                "port" -> IntProperty(name, value.trim().toInt())
+                "environment" -> StringProperty(name, value)
+                else ->  throw RuntimeException("unknown prop: $name")
+            }
+        }
+        fun server(propertyString: List<String>): ServerConfig{
+            val paresedProperties = mutableListOf<Property>()
+            for (p in propertyString){
+                paresedProperties += property(p)
+            }
+            return ServerConfigImpl(paresedProperties)
+        }
     }
-    println(pieces)
 }
-
-fun createChessPiece(n: String): ChessPiece {
-    val (type, file, rank) = n.toCharArray()
-
-    return when(type){
-        'P' -> Pawn(file, rank)
-        'Q' -> Queen(file, rank)
-        'N' -> Night(file, rank)
-        'B' -> Bechup(file, rank)
-        else -> throw RuntimeException("UnKnown piece $type")
-    }
-}
-
-interface ChessPiece {
-    val file: Char
-    val rank: Char
-}
-
-
-data class Pawn(
-    override val file: Char,
-    override val rank: Char
-) : ChessPiece
-
-data class Bechup(
-    override val file: Char,
-    override val rank: Char
-) : ChessPiece
-data class Night(
-    override val file: Char,
-    override val rank: Char
-) : ChessPiece
-data class Queen(
-    override val file: Char,
-    override val rank: Char
-) : ChessPiece
