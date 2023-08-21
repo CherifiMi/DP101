@@ -2,54 +2,48 @@ import java.lang.RuntimeException
 
 fun main() {
 
-    val email = MailBuilder().message("hellow").title("mito").build()
+    val email = Mail().message("hellow").title("mito")
 
-    println(email)
+    println(email.cc)
 
 }
 
 
-class MailBuilder {
-    private var to: List<String> = listOf("")
-    private var cc: List<String>? = null
-    private var title: String? = ""
-    private var message: String? = null
-    private var important: Boolean = false
+class Mail {
+    var to: List<String> = listOf("")
+        private set
+    var cc: List<String>? = null
+        private set
+    var title: String? = ""
+        private set
+    var message: String? = null
+        private set
+    var important: Boolean = false
+        private set
 
-    class Mail internal constructor(
-        val to: List<String>,
-        val cc: List<String>?,
-        val title: String?,
-        val message: String?,
-        val important: Boolean,
-    )
 
-    fun build(): Mail {
-        if (to.isEmpty()){
-            throw RuntimeException("to is empty")
-        }
-        return Mail(to, cc, title, message, important)
-    }
-
-    fun title(title: String?): MailBuilder {
+    fun title(title: String?): Mail {
         this.title = title
         return this
     }
-    fun important(important: Boolean): MailBuilder {
+
+    fun important(important: Boolean): Mail {
         this.important = important
         return this
     }
-    fun cc(cc: List<String>?): MailBuilder {
+
+    fun cc(cc: List<String>?): Mail {
         this.cc = cc
         return this
     }
-    fun to(to: List<String>): MailBuilder {
+
+    fun to(to: List<String>): Mail {
         this.to = to
         return this
     }
-    fun message(message: String): MailBuilder {
+
+    fun message(message: String): Mail {
         this.message = message
         return this
     }
-
 }
