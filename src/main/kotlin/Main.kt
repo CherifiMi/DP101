@@ -2,39 +2,42 @@ import java.lang.RuntimeException
 
 fun main() {
 
+    val repo = DefultStarTrakRepo()
+    val repo2 = StarShipLog(repo)
+    val repo3 = StarShipCheck(repo2)
+
+    println( repo3.getCaptin("USS") )
 }
-open class StarTrekRepo{
+interface StarTrekRepo{
+    fun getCaptin(shipName: String): String
+    fun addCaptin(shipName: String, captinName: String)
+}
+
+class DefultStarTrakRepo: StarTrekRepo{
+
     private val starShip = mutableMapOf("USS" to "Jean")
 
-    open fun getCaptin(shipName: String): String{
+    override fun getCaptin(shipName: String): String{
         return starShip[shipName] ?: "IDK"
     }
-    open fun addCaptin(shipName: String, captinName: String){
+    override fun addCaptin(shipName: String, captinName: String){
         starShip[shipName] = captinName
     }
-
 }
 
-class StarShipLog: StarTrekRepo(){
-    override fun getCaptin(shipName: String): String {
-        return super.getCaptin(shipName)
-        println(shipName)
-    }
 
-    override fun addCaptin(shipName: String, captinName: String) {
-        super.addCaptin(shipName, captinName)
-        println(shipName + captinName)
+class StarShipLog(private val repo: StarTrekRepo): StarTrekRepo by repo{
+    override fun getCaptin(shipName: String): String {
+        println(shipName)
+        return repo.getCaptin(shipName)
     }
-}class StarShipCheck: StarTrekRepo(){
+}
+
+class StarShipCheck(private val repo: StarTrekRepo): StarTrekRepo by repo{
     override fun getCaptin(shipName: String): String {
         if (shipName.toList().size>15){
             throw RuntimeException("tow long")
         }
-        return super.getCaptin(shipName)
-    }
-
-    override fun addCaptin(shipName: String, captinName: String) {
-        super.addCaptin(shipName, captinName)
-        println(shipName + captinName)
+        return repo.getCaptin(shipName)
     }
 }
