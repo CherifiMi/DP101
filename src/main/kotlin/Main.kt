@@ -8,7 +8,7 @@ fun main() {
     val withLogAndCheck = StarShipCheck(withLog)
 
 
-    println(withLogAndCheck["USS"])
+    println(starTruk == withCheck)
 
 }
 interface StarTrekRepo{
