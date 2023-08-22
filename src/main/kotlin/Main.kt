@@ -7,4 +7,20 @@ open class StarTrekRepo{
     open fun getCaptin(shipName: String): String{
         return starShip[shipName] ?: "IDK"
     }
+    open fun addCaptin(shipName: String, captinName: String){
+        starShip[shipName] = captinName
+    }
+
+}
+
+class StarShipLog: StarTrekRepo(){
+    override fun getCaptin(shipName: String): String {
+        return super.getCaptin(shipName)
+        println(shipName)
+    }
+
+    override fun addCaptin(shipName: String, captinName: String) {
+        super.addCaptin(shipName, captinName)
+        println(shipName + captinName)
+    }
 }
